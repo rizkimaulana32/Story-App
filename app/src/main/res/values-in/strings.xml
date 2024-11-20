@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Story App</string>
+    <string name="error_empty_email">Email tidak boleh kosong</string>
+    <string name="validationEmail">Format email tidak valid</string>
+    <string name="error_empty_password">Password tidak boleh kosong</string>
+    <string name="error_short_password">Password harus minimal 8 karakter</string>
+    <string name="error_empty_name">Nama tidak boleh kosong</string>
+    <string name="welcome">Selamat datang di Story App</string>
+    <string name="login">Masuk</string>
+    <string name="register">Daftar</string>
+    <string name="make_a_new_account">Buat Akun Baru</string>
+    <string name="enter_your_name">Masukkan nama Anda</string>
+    <string name="enter_password">Masukkan password</string>
+    <string name="have_an_account">Sudah punya akun?</string>
+    <string name="enter_email_address">Masukkan alamat email</string>
+    <string name="login_to_your_account">Masuk ke Akun Anda</string>
+    <string name="registerCapital">DAFTAR</string>
+    <string name="LoginCapital">MASUK</string>
+    <string name="haven_t_an_account">Belum punya akun?</string>
+    <string name="camera">Kamera</string>
+    <string name="gallery">Galeri</string>
+    <string name="upload">Unggah</string>
+    <string name="description">Deskripsi</string>
+    <string name="photo">Foto</string>
+    <string name="image">Gambar</string>
+    <string name="button_add_story">Tombol tambah cerita</string>
+    <string name="failed_take_picture">Gagal mengambil gambar</string>
+    <string name="no_image_selected">Tidak ada gambar yang dipilih</string>
+    <string name="language">Bahasa</string>
+    <string name="logout">Keluar</string>
+    <string name="detail_story">Story Detail</string>
+    <string name="add_story">Tambah Story</string>
+</resources>

@@ -1,0 +1,33 @@
+<resources>
+    <string name="app_name">Story App</string>
+    <string name="error_empty_email">Email cannot be empty</string>
+    <string name="validationEmail">Invalid email format</string>
+    <string name="error_empty_password">Password cannot be empty</string>
+    <string name="error_short_password">Password must be at least 8 characters</string>
+    <string name="error_empty_name">Name cannot be empty</string>
+    <string name="welcome">Welcome to Story App</string>
+    <string name="login">Login</string>
+    <string name="register">Register</string>
+    <string name="make_a_new_account">Make a New Account</string>
+    <string name="enter_your_name">Enter your name</string>
+    <string name="enter_password">Enter password</string>
+    <string name="have_an_account">Have an account?</string>
+    <string name="enter_email_address">Enter email address</string>
+    <string name="login_to_your_account">Login to Your Account</string>
+    <string name="registerCapital">REGISTER</string>
+    <string name="LoginCapital">LOGIN</string>
+    <string name="haven_t_an_account">Haven\'t an account?</string>
+    <string name="camera">Camera</string>
+    <string name="gallery">Gallery</string>
+    <string name="upload">Upload</string>
+    <string name="description">Description</string>
+    <string name="photo">Photo</string>
+    <string name="image">image</string>
+    <string name="button_add_story">button add story</string>
+    <string name="failed_take_picture">Failed to take picture</string>
+    <string name="no_image_selected">No image selected</string>
+    <string name="language">Language</string>
+    <string name="logout">Logout</string>
+    <string name="detail_story">Detail Story</string>
+    <string name="add_story">Add Story</string>
+</resources>
