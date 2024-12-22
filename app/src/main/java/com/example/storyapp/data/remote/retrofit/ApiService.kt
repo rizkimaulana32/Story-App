@@ -15,6 +15,7 @@ import retrofit2.http.Multipart
 import retrofit2.http.POST
 import retrofit2.http.Part
 import retrofit2.http.Path
+import retrofit2.http.Query
 
 interface ApiService {
 
@@ -33,10 +34,11 @@ interface ApiService {
         @Field("password") password: String
     ): LoginResponse
 
-
     @GET("stories")
     suspend fun getStories(
-        @Header("Authorization") token: String // Menambahkan token sebagai header
+        @Header("Authorization") token: String,
+        @Query("page") page: Int = 1,
+        @Query("size") size: Int = 20
     ): StoryResponse
 
     @GET("stories/{id}")
@@ -50,6 +52,14 @@ interface ApiService {
     suspend fun addStory(
         @Header("Authorization") token: String,
         @Part photo: MultipartBody.Part,
-        @Part("description") description: RequestBody
+        @Part("description") description: RequestBody,
+        @Part("lat") lat: RequestBody?,
+        @Part("lon") lon: RequestBody?
     ): AddStoryResponse
+
+    @GET("stories")
+    suspend fun getStoriesWithLocation(
+        @Header("Authorization") token: String,
+        @Query("location") location: Int = 1
+    ): StoryResponse
 }

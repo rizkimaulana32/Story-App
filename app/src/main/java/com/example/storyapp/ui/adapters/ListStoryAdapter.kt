@@ -2,37 +2,37 @@ package com.example.storyapp.ui.adapters
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.example.storyapp.data.remote.response.ListStoryItem
+import com.example.storyapp.data.local.Story
 import com.example.storyapp.databinding.ItemRowListStoryBinding
 
-class ListStoryAdapter(private val onItemClicked: (ListStoryItem) -> Unit) : ListAdapter<ListStoryItem, ListStoryAdapter.ListStoryViewHolder>(
+class ListStoryAdapter(private val onItemClicked: (Story) -> Unit) : PagingDataAdapter<Story, ListStoryAdapter.ListStoryViewHolder>(
     DIFF_CALLBACK
 ) {
     companion object {
-        val DIFF_CALLBACK = object : DiffUtil.ItemCallback<ListStoryItem>() {
+        val DIFF_CALLBACK = object : DiffUtil.ItemCallback<Story>() {
             override fun areItemsTheSame(
-                oldItem: ListStoryItem,
-                newItem: ListStoryItem
+                oldItem: Story,
+                newItem: Story
             ): Boolean {
                 return oldItem == newItem
             }
 
             override fun areContentsTheSame(
-                oldItem: ListStoryItem,
-                newItem: ListStoryItem
+                oldItem: Story,
+                newItem: Story
             ): Boolean {
-                return oldItem == newItem
+                return oldItem.id == newItem.id
             }
         }
     }
 
     class ListStoryViewHolder(private val binding: ItemRowListStoryBinding) :
         RecyclerView.ViewHolder(binding.root) {
-            fun bind(story: ListStoryItem, onItemClicked: (ListStoryItem) -> Unit) {
+            fun bind(story: Story, onItemClicked: (Story) -> Unit) {
                 Glide.with(binding.imageView.context)
                     .load(story.photoUrl)
                     .into(binding.imageView)
@@ -52,6 +52,8 @@ class ListStoryAdapter(private val onItemClicked: (ListStoryItem) -> Unit) : Lis
 
     override fun onBindViewHolder(holder: ListStoryViewHolder, position: Int) {
         val story = getItem(position)
-        holder.bind(story, onItemClicked)
+        if (story != null) {
+            holder.bind(story, onItemClicked)
+        }
     }
 }

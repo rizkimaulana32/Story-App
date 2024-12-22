@@ -1,8 +1,14 @@
 package com.example.storyapp.ui.main.addstory
 
+import android.Manifest
+import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.location.LocationManager
 import android.net.Uri
 import android.os.Bundle
+import android.provider.Settings
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -10,6 +16,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import com.example.storyapp.R
 import com.example.storyapp.databinding.FragmentAddStoryBinding
@@ -19,6 +26,7 @@ import com.example.storyapp.ui.factory.StoryViewModelFactory
 import com.example.storyapp.ui.main.MainActivity
 import com.example.storyapp.utils.ImageUtil
 import com.example.storyapp.utils.ImageUtil.reduceFileImage
+import com.google.android.gms.location.LocationServices
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
@@ -44,7 +52,7 @@ class AddStoryFragment : Fragment() {
         val pref = UserPreference.getInstance(requireContext().dataStore)
         addStoryViewModel = ViewModelProvider(
             requireActivity(),
-            StoryViewModelFactory.getInstance(pref)
+            StoryViewModelFactory.getInstance(requireContext(), pref)
         )[AddStoryViewModel::class.java]
 
         addStoryViewModel.currentImageUri.observe(viewLifecycleOwner) { uri ->
@@ -74,7 +82,14 @@ class AddStoryFragment : Fragment() {
 
         binding.buttonGallery.setOnClickListener { startGallery() }
         binding.buttonCamera.setOnClickListener { startCamera() }
-        binding.buttonUpload.setOnClickListener { uploadImage() }
+        binding.buttonUpload.setOnClickListener { upload() }
+        binding.cbAddLoc.setOnClickListener {
+            if (binding.cbAddLoc.isChecked) {
+                getMyLocation()
+            } else {
+                addStoryViewModel.addLocation(null, null)
+            }
+        }
     }
 
     private val launcherGallery = registerForActivityResult(
@@ -84,7 +99,7 @@ class AddStoryFragment : Fragment() {
             addStoryViewModel.setImageUri(uri)
             showImage(uri)
         } else {
-            showToast(resources.getString(R.string.no_image_selected))
+            showToast(getString(R.string.no_image_selected))
         }
     }
 
@@ -107,7 +122,7 @@ class AddStoryFragment : Fragment() {
             addStoryViewModel.setImageUri(currentImageUri!!)
             showImage(currentImageUri!!)
         } else {
-            showToast(resources.getString(R.string.failed_take_picture))
+            showToast(getString(R.string.failed_take_picture))
         }
     }
 
@@ -116,9 +131,11 @@ class AddStoryFragment : Fragment() {
         launcherIntentCamera.launch(currentImageUri!!)
     }
 
-    private fun uploadImage() {
+    private fun upload() {
         addStoryViewModel.currentImageUri.value?.let { uri ->
             val description = binding.editTextDescription.text.toString()
+            val lat = addStoryViewModel.latitude.value
+            val lon = addStoryViewModel.longitude.value
             val image = ImageUtil.uriToFile(uri, requireContext()).reduceFileImage()
 
             val requestBody = description.toRequestBody("text/plain".toMediaType())
@@ -129,13 +146,56 @@ class AddStoryFragment : Fragment() {
                 requestImageFile
             )
 
+            val latRequestBody = lat?.toString()?.toRequestBody("text/plain".toMediaType())
+            val lonRequestBody = lon?.toString()?.toRequestBody("text/plain".toMediaType())
+
             showLoading(true)
-            addStoryViewModel.addStory(multipartBody, requestBody)
-        } ?: showToast(resources.getString(R.string.no_image_selected))
+            addStoryViewModel.addStory(multipartBody, requestBody, latRequestBody, lonRequestBody)
+            Log.d("halooo", "$lat $lon")
+        } ?: showToast(getString(R.string.no_image_selected))
     }
 
     private fun showLoading(isLoading: Boolean) {
         binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
+    }
+
+    private fun getMyLocation() {
+        if (ContextCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED) {
+            val locationManager =
+                requireContext().getSystemService(Context.LOCATION_SERVICE) as LocationManager
+            if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+                val intent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
+                startActivity(intent)
+                binding.cbAddLoc.isChecked = false
+            } else {
+                val fusedLocation =
+                    LocationServices.getFusedLocationProviderClient(requireContext())
+                fusedLocation.lastLocation.addOnSuccessListener { location ->
+                    if (location != null) {
+                        addStoryViewModel.addLocation(location.latitude, location.longitude)
+                        showToast(getString(R.string.location_added))
+                    } else {
+                        showToast(getString(R.string.location_not_found))
+                    }
+                }
+            }
+        } else {
+            requestLocationPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+        }
+    }
+
+    private val requestLocationPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { isGranted: Boolean ->
+        if (isGranted) {
+            showToast(getString(R.string.permission_location_granted))
+            getMyLocation()
+        } else {
+            showToast(getString(R.string.permission_location_denied))
+        }
     }
 
     override fun onDestroyView() {

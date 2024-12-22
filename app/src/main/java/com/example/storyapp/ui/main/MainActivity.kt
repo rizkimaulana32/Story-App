@@ -19,6 +19,7 @@ import com.example.storyapp.pref.UserPreference
 import com.example.storyapp.pref.dataStore
 import com.example.storyapp.ui.auth.AuthActivity
 import com.example.storyapp.ui.factory.MainViewModelFactory
+import com.example.storyapp.ui.main.map.MapsActivity
 import com.google.android.material.appbar.MaterialToolbar
 
 class MainActivity : AppCompatActivity() {
@@ -79,6 +80,11 @@ class MainActivity : AppCompatActivity() {
                     intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
                     startActivity(intent)
                     finish()
+                    true
+                }
+                R.id.action_map -> {
+                    val intent = Intent(this@MainActivity, MapsActivity::class.java)
+                    startActivity(intent)
                     true
                 }
                 else -> false

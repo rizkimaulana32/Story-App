@@ -1,5 +1,7 @@
 package com.example.storyapp.di
 
+import android.content.Context
+import com.example.storyapp.data.local.StoryDatabase
 import com.example.storyapp.data.remote.retrofit.ApiConfig
 import com.example.storyapp.repository.AuthRepository
 import com.example.storyapp.repository.StoryRepository
@@ -12,8 +14,10 @@ object Injection {
         return AuthRepository.getInstance(apiService, dispatcher)
     }
 
-    fun provideStoryRepository(): StoryRepository {
+    fun provideStoryRepository(context: Context): StoryRepository {
         val apiService = ApiConfig.getApiService()
-        return StoryRepository.getInstance(apiService)
+        val storyDatabase = StoryDatabase.getDatabase(context)
+        val dispatcher = Dispatchers.IO
+        return StoryRepository.getInstance(apiService, storyDatabase, dispatcher)
     }
 }

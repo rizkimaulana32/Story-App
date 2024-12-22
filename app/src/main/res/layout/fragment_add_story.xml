@@ -35,7 +35,7 @@
             app:layout_constraintEnd_toStartOf="@id/buttonGallery"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/imagePreview"
-            tools:ignore="VisualLintButtonSize" />
+            tools:ignore="VisualLintButtonSize,TextContrastCheck" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/buttonGallery"
@@ -46,7 +46,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/buttonCamera"
             app:layout_constraintTop_toBottomOf="@id/imagePreview"
-            tools:ignore="VisualLintButtonSize" />
+            tools:ignore="VisualLintButtonSize,TextContrastCheck" />
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/textInputLayoutDescription"
@@ -69,7 +69,16 @@
                 tools:ignore="TextContrastCheck,VisualLintTextFieldSize" />
         </com.google.android.material.textfield.TextInputLayout>
 
-        <!-- Upload Button -->
+        <CheckBox
+            android:id="@+id/cbAddLoc"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="@string/add_location"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textInputLayoutDescription" />
+
         <com.google.android.material.button.MaterialButton
             android:id="@+id/buttonUpload"
             android:layout_width="0dp"
@@ -78,8 +87,8 @@
             android:text="@string/upload"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/textInputLayoutDescription"
-            tools:ignore="VisualLintButtonSize" />
+            app:layout_constraintTop_toBottomOf="@id/cbAddLoc"
+            tools:ignore="VisualLintButtonSize,TextContrastCheck" />
 
         <ProgressBar
             android:id="@+id/progressBar"
@@ -92,6 +101,5 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:visibility="visible" />
-
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

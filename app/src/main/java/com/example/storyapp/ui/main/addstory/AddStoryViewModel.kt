@@ -35,12 +35,12 @@ class AddStoryViewModel(
         _currentImageUri.value = uri
     }
 
-    fun addStory(uri: MultipartBody.Part, description: RequestBody) {
+    fun addStory(uri: MultipartBody.Part, description: RequestBody, lat: RequestBody? = null, lon: RequestBody? = null) {
         _isLoading.value = true
         viewModelScope.launch {
             val token = userPreference.getToken().first()
             if (token != null) {
-                when (val result = storyRepository.addStory(token, uri, description)) {
+                when (val result = storyRepository.addStory(token, uri, description, lat, lon)) {
                     is Result.Loading -> {
                         _isLoading.value = true
                     }
@@ -58,5 +58,17 @@ class AddStoryViewModel(
                 _isLoading.value = false
             }
         }
+    }
+
+
+    private val lat = MutableLiveData<Double>()
+    val latitude: LiveData<Double> = lat
+
+    private val lon = MutableLiveData<Double>()
+    val longitude: LiveData<Double> = lon
+
+    fun addLocation(lat: Double? = null, lon: Double? = null) {
+        this.lat.value = lat
+        this.lon.value = lon
     }
 }

@@ -5,8 +5,8 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.asLiveData
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.storyapp.R
@@ -14,7 +14,8 @@ import com.example.storyapp.databinding.FragmentHomeBinding
 import com.example.storyapp.pref.UserPreference
 import com.example.storyapp.pref.dataStore
 import com.example.storyapp.ui.adapters.ListStoryAdapter
-import com.example.storyapp.ui.factory.StoryViewModelFactory
+import com.example.storyapp.ui.adapters.LoadingStateAdapter
+import com.example.storyapp.ui.factory.HomeViewModelFactory
 
 class HomeFragment : Fragment() {
     private var _binding: FragmentHomeBinding? = null
@@ -36,35 +37,33 @@ class HomeFragment : Fragment() {
         val pref = UserPreference.getInstance(requireContext().dataStore)
         homeViewModel = ViewModelProvider(
             requireActivity(),
-            StoryViewModelFactory.getInstance(pref)
+            HomeViewModelFactory.getInstance(requireContext())
         )[HomeViewModel::class.java]
 
         val adapter = ListStoryAdapter { story ->
-            val action = HomeFragmentDirections.actionHomeFragmentToDetailFragment(story.id ?: "")
+            val action = HomeFragmentDirections.actionHomeFragmentToDetailFragment(story.id)
             findNavController().navigate(action)
         }
 
-        binding.rvStory.adapter = adapter
-        binding.rvStory.layoutManager = LinearLayoutManager(requireContext())
-
-        homeViewModel.isLoading.observe(viewLifecycleOwner) {
-            binding.progressBar.visibility = if (it) View.VISIBLE else View.GONE
-        }
-
-        homeViewModel.stories.observe(viewLifecycleOwner) { stories ->
-            adapter.submitList(stories)
-        }
-
-        homeViewModel.errorMessage.observe(viewLifecycleOwner) {
-            it.getContentIfNotHandled()?.let { message ->
-                Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
+        pref.getToken().asLiveData().observe(viewLifecycleOwner) { token ->
+            if (!token.isNullOrEmpty()) {
+                homeViewModel.stories(token).observe(viewLifecycleOwner) { pagingData ->
+                    adapter.submitData(lifecycle, pagingData)
+                }
             }
         }
+
+        binding.rvStory.adapter = adapter.withLoadStateFooter(
+            footer = LoadingStateAdapter {
+                adapter.retry()
+            }
+        )
+
+        binding.rvStory.layoutManager = LinearLayoutManager(requireContext())
 
         binding.fabAdd.setOnClickListener {
             findNavController().navigate(R.id.action_homeFragment_to_addStoryFragment)
         }
-
     }
 
     override fun onDestroyView() {

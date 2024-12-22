@@ -33,7 +33,7 @@ class DetailFragment : Fragment() {
         val pref = UserPreference.getInstance(requireContext().dataStore)
         val detailViewModel = ViewModelProvider(
             requireActivity(),
-            StoryViewModelFactory.getInstance(pref)
+            StoryViewModelFactory.getInstance(requireContext(), pref)
         )[DetailViewModel::class.java]
 
         val args = DetailFragmentArgs.fromBundle(requireArguments())
@@ -53,11 +53,16 @@ class DetailFragment : Fragment() {
             }
         }
 
-        detailViewModel.errorMessage.observe(viewLifecycleOwner) {
-            it.getContentIfNotHandled().let { message ->
-                Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
+        detailViewModel.errorMessage.observe(viewLifecycleOwner) { event ->
+            event.getContentIfNotHandled()?.let { message ->
+                if (message.isNotEmpty()) {
+                    Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
+                } else {
+                    Toast.makeText(requireContext(), "An error occurred", Toast.LENGTH_SHORT).show()
+                }
             }
         }
+
     }
 
     override fun onDestroyView() {
@@ -76,6 +81,7 @@ class DetailFragment : Fragment() {
             textViewCreatedAt.text = DateUtil.dateFormat(story.createdAt)
         }
     }
+
 
     private fun loading(isLoading: Boolean) {
         binding.apply {

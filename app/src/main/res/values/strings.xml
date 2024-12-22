@@ -30,4 +30,12 @@
     <string name="logout">Logout</string>
     <string name="detail_story">Detail Story</string>
     <string name="add_story">Add Story</string>
+    <string name="map">Map</string>
+    <string name="title_activity_maps">MapsActivity</string>
+    <string name="add_location">Add Location</string>
+    <string name="retry">Retry</string>
+    <string name="permission_location_denied">Permission location denied</string>
+    <string name="permission_location_granted">Permission location granted</string>
+    <string name="location_added">Location added</string>
+    <string name="location_not_found">Location is not found. Try again</string>
 </resources>
